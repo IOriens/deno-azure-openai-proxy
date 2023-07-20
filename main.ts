@@ -84,7 +84,13 @@ async function handleDirect(request: Request, path: string) {
   if (response.body) {
       const { readable, writable } = new TransformStream();
       stream(response.body, writable);
-      return new Response(readable, wrapResponse(response));
+      return new Response(readable, {
+        ...response,
+        headers: {
+          ...response.headers,
+          'Access-Control-Allow-Origin': '*',
+        }
+      });
   } else {
       throw new Error('Response body is null');
   }

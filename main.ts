@@ -85,7 +85,8 @@ async function handleDirect(request: Request, path: string) {
       const { readable, writable } = new TransformStream();
       stream(response.body, writable);
       return new Response(readable, {
-        ...response,
+        status: response.status,
+        statusText: response.statusText,
         headers: {
           ...response.headers,
           'Access-Control-Allow-Origin': '*',

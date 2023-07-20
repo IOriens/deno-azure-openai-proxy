@@ -66,7 +66,7 @@ async function handleDirect(request: Request, path: string) {
   const [key, body] = await extractRequest(request);
   const response: Response = await requestAzure(request.method, body, path, key);
 
-  response.headers['Access-Control-Allow-Origin'] = '*'
+  response.headers.set('Access-Control-Allow-Origin', '*')
 
   if (body?.stream != true){
     return response

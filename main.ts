@@ -65,6 +65,9 @@ async function requestAzure(method: string, body: any, path: string, authKey?: s
 async function handleDirect(request: Request, path: string) {
   const [key, body] = await extractRequest(request);
   const response: Response = await requestAzure(request.method, body, path, key);
+
+  response.headers['Access-Control-Allow-Origin'] = '*'
+
   if (body?.stream != true){
     return response
   } 
@@ -155,8 +158,11 @@ async function handleEmbedding(request: Request, path: string) {
       }
       const json: string = JSON.stringify(retbody, null, 2);
       return new Response(json, {
-          headers: { 'Content-Type': 'application/json' },
-      });
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
   } else {
       throw new Error('Invalid input type');
   }
@@ -195,8 +201,11 @@ async function handleModels(request:Request):Promise<Response> {
 
   const json:string = JSON.stringify(data, null, 2);
   return new Response(json, {
-    headers: { 'Content-Type': 'application/json' },
-  });
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    },
+  })
 }
 
 function handleOPTIONS(request:Request):Response {

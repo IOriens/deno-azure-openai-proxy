@@ -78,6 +78,7 @@ async function handleDirect(request: Request, path: string) {
   const [key, body] = await extractRequest(request);
   const response: Response = await requestAzure(request.method, body, path, key);
   console.log('body?.stream', body?.stream)
+  console.log(response.headers)
 
   if (body?.stream != true){
     return wrapResponse(response)
@@ -85,13 +86,12 @@ async function handleDirect(request: Request, path: string) {
   if (response.body) {
       const { readable, writable } = new TransformStream();
       stream(response.body, writable);
+      let newHeaders = new Headers(response.headers)
+      newHeaders.set( 'Access-Control-Allow-Origin', '*')
       return new Response(readable, {
         status: response.status,
         statusText: response.statusText,
-        headers: {
-          ...response.headers,
-          'Access-Control-Allow-Origin': '*',
-        }
+        headers: newHeaders
       });
   } else {
       throw new Error('Response body is null');

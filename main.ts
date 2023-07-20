@@ -62,19 +62,29 @@ async function requestAzure(method: string, body: any, path: string, authKey?: s
   return await fetch(fetchAPI, payload);
   // const response:Response = await fetch(fetchAPI, payload);
 }
+
+
+function wrapResponse(response) {
+  return new Response(response.body, {
+    headers: {
+      ...response.headers,
+      'Access-Control-Allow-Origin': '*',
+    }
+  })
+}
+
 async function handleDirect(request: Request, path: string) {
   const [key, body] = await extractRequest(request);
   const response: Response = await requestAzure(request.method, body, path, key);
-
-  response.headers.set('Access-Control-Allow-Origin', '*')
+  console.log('body?.stream', body?.stream)
 
   if (body?.stream != true){
-    return response
+    return wrapResponse(response)
   } 
   if (response.body) {
       const { readable, writable } = new TransformStream();
       stream(response.body, writable);
-      return new Response(readable, response);
+      return new Response(readable, wrapResponse(response));
   } else {
       throw new Error('Response body is null');
   }

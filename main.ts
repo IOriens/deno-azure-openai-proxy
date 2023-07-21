@@ -76,6 +76,7 @@ function wrapResponse(response) {
 
 async function handleDirect(request: Request, path: string) {
   const [key, body] = await extractRequest(request);
+  console.log(body)
   const response: Response = await requestAzure(request.method, body, path, key);
   console.log('body?.stream', body?.stream)
   console.log(response.headers)
